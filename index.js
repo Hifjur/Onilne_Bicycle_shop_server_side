@@ -44,11 +44,8 @@ async function run() {
         const bikesCollection = database.collection('bikes');
         const usersCollection = database.collection('users');
 
-        app.get('/bikes', verifyToken, async (req, res) => {
-            const email = req.query.email;
-            const date = new Date(req.query.date).toLocaleDateString();
-            const query = { email: email, date: date };
-            const cursor = bikesCollection.find(query);
+        app.get('/bikes', async (req, res) => {
+            const cursor = bikesCollection.find();
             const bikes = await cursor.toArray();
             res.json(bikes);
         })
