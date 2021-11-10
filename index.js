@@ -43,6 +43,7 @@ async function run() {
         const database = client.db('BikersCorner');
         const bikesCollection = database.collection('bikes');
         const usersCollection = database.collection('users');
+        const orderCollection = database.collection('orders');
 
         app.get('/bikes', async (req, res) => {
             const cursor = bikesCollection.find();
@@ -57,6 +58,20 @@ async function run() {
             console.log(result);
             res.json(result);
         });
+
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            console.log(result);
+            res.json(result);
+        });
+
+        app.get('/bikes/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const query = { _id: _id };
+            const bike = await bikesCollection.findOne(query);
+            res.json(bike);
+        })
 
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
