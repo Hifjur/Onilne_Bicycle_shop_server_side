@@ -45,7 +45,7 @@ async function run() {
         const bikesCollection = database.collection('bikes');
         const usersCollection = database.collection('users');
         const orderCollection = database.collection('orders');
-
+        const reviewCollection = database.collection('reviews');
         app.get('/bikes', async (req, res) => {
             const cursor = bikesCollection.find();
             const bikes = await cursor.toArray();
@@ -81,6 +81,20 @@ async function run() {
             const bike = await bikesCollection.findOne(query);
             res.json(bike);
         })
+
+
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewCollection.find();
+            const reviews = await cursor.toArray();
+            res.json(reviews);
+        })
+
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            console.log(result);
+            res.json(result);
+        });
 
         app.get('/orders', verifyToken, async (req, res) => {
             const email = req.query.email;
