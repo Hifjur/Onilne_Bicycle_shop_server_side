@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 const { query } = require('express');
 const admin = require("firebase-admin");
 const port = process.env.PORT || 5000;
@@ -75,10 +75,25 @@ async function run() {
 
         app.get('/orders', verifyToken, async (req, res) => {
             const email = req.query.email;
-            const query = { email: email};
+            const query = { email: email };
             const cursor = orderCollection.find(query);
             const orders = await cursor.toArray();
             res.json(orders);
+        })
+
+        app.get('/orders/admin', verifyToken, async (req, res) => {
+            const cursor = orderCollection.find();
+            const orders = await cursor.toArray();
+            res.json(orders);
+        })
+        app.put('/orders/admin', verifyToken, async (req, res) => {
+            const orderId = req.body;
+            
+            console.log(orderId);
+            const filter = { orderId: orderId.orderId };
+            const updateDoc = { $set: { status: 'shipped' } };
+            const result = await orderCollection.updateOne(filter, updateDoc);
+            res.json(result);
         })
 
         app.get('/users/:email', async (req, res) => {
@@ -121,8 +136,8 @@ async function run() {
                     res.json(result);
                 }
             }
-            else{
-                res.status(403).json({message: 'Permission denied'});
+            else {
+                res.status(403).json({ message: 'Permission denied' });
             }
         })
 
