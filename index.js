@@ -73,6 +73,14 @@ async function run() {
             res.json(bike);
         })
 
+        app.get('/orders', verifyToken, async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email};
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.json(orders);
+        })
+
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
