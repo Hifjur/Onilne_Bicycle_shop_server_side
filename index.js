@@ -77,7 +77,7 @@ async function run() {
 
         app.get('/bikes/:_id', async (req, res) => {
             const _id = req.params._id;
-            const query = { _id: _id };
+            const query = { _id: ObjectId(_id) };
             const bike = await bikesCollection.findOne(query);
             res.json(bike);
         })
@@ -102,6 +102,15 @@ async function run() {
             const cursor = orderCollection.find(query);
             const orders = await cursor.toArray();
             res.json(orders);
+        })
+
+        //delete using auto generated unique order id. customer cant see orders from emails, meaning has no access to oderId that was not created by the email.
+        app.delete('/orders', verifyToken, async(req, res) => {
+            const id = req.body;
+            console.log("delete",id);
+            const query = {orderId : id.orderId};
+            const result = await orderCollection.deleteOne(query);
+            res.json(result);
         })
 
         app.get('/orders/admin', verifyToken, async (req, res) => {
