@@ -6,6 +6,7 @@ const { MongoClient, ObjectID } = require('mongodb');
 const { query } = require('express');
 const admin = require("firebase-admin");
 const port = process.env.PORT || 5000;
+const ObjectId = require('mongodb').ObjectId;
 
 //jwt verification
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -58,6 +59,14 @@ async function run() {
             console.log(result);
             res.json(result);
         });
+
+        app.delete('/bikes/:id', verifyToken, async(req, res) => {
+            const id = req.params.id;
+            console.log("delete",id);
+            const query = {_id : ObjectId(id)};
+            const result = await bikesCollection.deleteOne(query);
+            res.json(result);
+        })
 
         app.post('/orders', async (req, res) => {
             const order = req.body;
