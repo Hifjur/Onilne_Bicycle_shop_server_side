@@ -46,6 +46,7 @@ async function run() {
         const usersCollection = database.collection('users');
         const orderCollection = database.collection('orders');
         const reviewCollection = database.collection('reviews');
+        const socialCollection = database.collection('social')
         app.get('/bikes', async (req, res) => {
             const cursor = bikesCollection.find();
             const bikes = await cursor.toArray();
@@ -86,13 +87,27 @@ async function run() {
         app.get('/reviews', async (req, res) => {
             const cursor = reviewCollection.find();
             const reviews = await cursor.toArray();
+            
             res.json(reviews);
         })
 
         app.post('/reviews', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
-            console.log(result);
+           
+            res.json(result);
+        });
+        app.get('/social', async (req, res) => {
+            const cursor = socialCollection.find();
+            const photos = await cursor.toArray();
+            
+            res.json(photos);
+        })
+
+        app.post('/social', async (req, res) => {
+            const photo = req.body;
+            const result = await socialCollection.insertOne(photo);
+           
             res.json(result);
         });
 
